@@ -10,6 +10,8 @@ import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyClientCredentials
 
+flag = True
+
 #load credentials
 load_dotenv("credentials.env")
 
@@ -19,7 +21,19 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET", "")
 OUTPUT_FILE_NAME = "track_info.csv"
 
 #the playlist link
-PLAYLIST_LINK = input("Enter the spotify playlist ID: ")
+print("Please choose one of the following options:")
+print("1. Enter your own playlist link")
+print("2. Use Spotifiy's own Best of the Decade playlist")
+choice = input("")
+while flag:
+    if choice == "1":
+        PLAYLIST_LINK = input("Enter the spotify playlist ID: ")
+        flag = False
+    elif choice == "2":
+        PLAYLIST_LINK = "https://open.spotify.com/playlist/37i9dQZF1DWXADZ9KRTmmm?si=f4b952af45414ef1"
+        flag = False
+    else:
+        choice = input("Please enter either 1 or 2:")
 
 client_credentials_manager = SpotifyClientCredentials(
     client_id=CLIENT_ID, client_secret=CLIENT_SECRET
@@ -126,9 +140,11 @@ with open(csv_file_path, 'r') as csv_file:
 ost_choice = input("Choose one of these songs and we will find other songs in the playlist that are similar: ", )
 
 print("Recommended Songs using Cosine Similarity:")
-print(generate_recommendation('The Tale of a Cruel World', cosine).values)
+print(generate_recommendation(ost_choice , cosine).values)
 
 sig_kernel = sigmoid_kernel(normalised_df)
 
 print("Recommended Songs using sig_kernel:")
-print(generate_recommendation('The Tale of a Cruel World', sig_kernel).values)
+print(generate_recommendation(ost_choice , sig_kernel).values)
+
+os.remove("track_info.csv")
